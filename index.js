@@ -7,7 +7,7 @@ import jsonfile from "jsonfile";
 let settings = await jsonfile.readFile("settings.json");
 let santas = await jsonfile.readFile("santas.json");
 
-const santaarray = santas.flatMap(s=>[s.email,s.altMail]).filter(m=>!!m);
+const santaarray = santas.flatMap(s=>[s.email,s.altMail]).filter(m=>!!m).map(m=>m.toLowerCase());
 const santabcc = santaarray.join(",");
 
 const pop3 = new Pop3Command(settings.pop3);
@@ -18,7 +18,7 @@ let mailstring
 for(let i=0;i<mails.length;i++){
     mailstring = await pop3.RETR(mails[i][0]);
     let parsed = (await simpleParser(mailstring));
-    if (santaarray.indexOf(parsed.from.value[0].address)>-1){
+    if (santaarray.indexOf(parsed.from.value[0].address.toLowerCase())>-1){
         await xport.sendMail({
             from:`"${parsed.from.value[0].name||parsed.from.value[0].address} via Santa"<${settings.email}>`,
             bcc:santabcc,
