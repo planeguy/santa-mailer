@@ -1,0 +1,17 @@
+{
+    "prefix":"GARDENCONDO SECRET SANTA 2023",
+    "email":"santa@thenorth.pole",
+    "pop3":{
+        "host":"mail.elvesnhosting.net",
+        "user":"santa@thenorth.pole",
+        "password":""
+    },
+    "smtp":{
+        "host":"mail.elvesnhosting.net",
+        "port":465,
+        "auth":{
+            "user":"santa@thenorth.pole",
+            "pass":""
+        }
+    }
+}
