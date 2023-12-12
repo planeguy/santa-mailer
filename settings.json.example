@@ -13,5 +13,8 @@
             "user":"santa@thenorth.pole",
             "pass":""
         }
+    },
+    "gmail_sucks":{
+        "bcc_max":5
     }
 }
