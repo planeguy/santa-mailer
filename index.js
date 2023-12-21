@@ -7,7 +7,7 @@ import jsonfile from "jsonfile";
 let settings = await jsonfile.readFile("settings.json");
 let santas = await jsonfile.readFile("santas.json");
 
-const santaarray = santas.flatMap(s=>[s.email,s.altMail]).filter(m=>!!m).map(m=>m.toLowerCase());
+const santaarray = santas.flatMap(s=>[s.email,s.aka]).filter(m=>!!m).map(m=>m.toLowerCase());
 const santabcc = santaarray.join(",");
 
 const pop3 = new Pop3Command(settings.pop3);
@@ -19,13 +19,15 @@ for(let i=0;i<mails.length;i++){
     mailstring = await pop3.RETR(mails[i][0]);
     let parsed = (await simpleParser(mailstring));
     if (santaarray.indexOf(parsed.from.value[0].address.toLowerCase())>-1){
-        await xport.sendMail({
-            from:`"${parsed.from.value[0].name||parsed.from.value[0].address} via Santa"<${settings.email}>`,
-            bcc:santabcc,
-            subject:groupPrefixInSubject(parsed.subject,settings.prefix),
-            text:parsed.text,
-            html:parsed.html
-        });
+        await Promise.all(
+            santaarray.map(santa=>xport.sendMail({
+                to:santa.email,
+                from:`"${parsed.from.value[0].name||parsed.from.value[0].address} via Santa"<${settings.email}>`,
+                subject:groupPrefixInSubject(parsed.subject,settings.prefix),
+                text:parsed.text,
+                html:parsed.html
+            }))
+        );
     } else {
         console.log(`$cDROP: email from ${parsed.from.value[0].address}`,"color:red");
     }
