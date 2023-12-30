@@ -7,7 +7,7 @@ import jsonfile from "jsonfile";
 let settings = await jsonfile.readFile("settings.json");
 let santas = await jsonfile.readFile("santas.json");
 
-const santaarray = santas.flatMap(s=>[s.email,s.aka]).filter(m=>!!m).map(m=>m.toLowerCase());
+const santaarray = santas.flatMap(s=>[s.email,...(Array.isArray(s.aka)?s.aka:[s.aka])]).filter(m=>!!m).map(m=>m.toLowerCase());
 const santabcc = santaarray.join(",");
 
 const pop3 = new Pop3Command(settings.pop3);
